@@ -36,19 +36,30 @@ def process_img(img, name, color):
     drawing = img.copy()
     # if cv2.contourArea(orange_contours) < 100:
 
-    if orange_contours:
-        # cv2.putText(drawing, 'CONTOURS WAS DETECTED', (100, 300), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 0, 255), 4)
-        cv2.drawContours(drawing, orange_contours, -1, (0, 0, 255), thickness=cv2.FILLED)
     if green_contours:
         cv2.drawContours(drawing, green_contours, -1, (255, 0, 00), 1)
+    if orange_contours:
+        # cv2.putText(drawing, 'CONTOURS WAS DETECTED', (100, 300), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 0, 255), 4)
 
-    cv2.imshow('contours', drawing)
+        for cnt in orange_contours:
+            if cv2.contourArea(cnt) < 100:
+                continue
+            cv2.drawContours(drawing, [cnt], -1, (0, 0, 255), thickness=cv2.FILLED)
+            moments = cv2.moments(cnt)
+            try:
+                x = int(moments['m10'] / moments['m00'])
+                y = int(moments['m01'] / moments['m00'])
+                cv2.circle(drawing, (x, y), 4, (0, 255, 255), -1)
+                cv2.putText(drawing, 'CONTOURS WAS DETECTED', (100, 300), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 0, 255), 4)
+            except ZeroDivisionError:
+                pass
+    return drawing
 
 
 if __name__ == '__main__':
     while True:
         cap = sct.grab(bounding_box)
         img = np.array(cap)
-        cv2.imshow('GTAV', img)
-        process_img(img, 'GTA', colors)
+        cv2.imshow('GTAV', process_img(img, 'GTA', colors))
+
         pressed_key = cv2.waitKey(1)
