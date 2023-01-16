@@ -3,7 +3,7 @@ import numpy as np
 import cv2
 from mss import mss
 
-bounding_box = {'top': 30, 'left': 0, 'width': 800, 'height': 600}
+bounding_box = {'top': 30, 'left': 0, 'width': 1902, 'height': 1033}
 
 sct = mss()
 
